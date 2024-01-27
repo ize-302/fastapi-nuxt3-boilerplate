@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=postgres://ozorku:postgres@host.docker.internal:5432/example
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - "./frontend:/app"
+      - "/app/node_modules"
+    ports:
+      - 3000:3000
+
+  db:
+    image: postgres:15.1
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=ozorku
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=example
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
